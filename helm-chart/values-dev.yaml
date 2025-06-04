@@ -1,0 +1,8 @@
+replicaCount: 1
+image:
+  repository: reachnaveen
+  tag: dev
+  pullPolicy: IfNotPresent
+service:
+  type: ClusterIP
+  port: 80

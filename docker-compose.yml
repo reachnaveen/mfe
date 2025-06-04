@@ -1,0 +1,45 @@
+
+version: '3.8'
+services:
+  host-app:
+    build: ./host-app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - mfe-net
+
+  product-search-mfe:
+    build: ./product-search-mfe
+    ports:
+      - "3001:3001"
+    networks:
+      - mfe-net
+
+  product-details-mfe:
+    build: ./product-details-mfe
+    ports:
+      - "3002:3002"
+    networks:
+      - mfe-net
+
+  backend:
+    build: ./backend
+    ports:
+      - "4000:4000"
+    networks:
+      - mfe-net
+
+networks:
+  mfe-net:
+    driver: bridge
+
+
+  product-filter:
+    build:
+      context: ./product-filter-mfe
+    ports:
+      - "3004:3004"
+    networks:
+      - microfrontend

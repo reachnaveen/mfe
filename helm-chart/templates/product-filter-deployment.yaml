@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-filter-mfe
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: product-filter-mfe
+  template:
+    metadata:
+      labels:
+        app: product-filter-mfe
+    spec:
+      containers:
+        - name: product-filter-mfe
+          image: "{{ .Values.image.repository }}/product-filter-mfe:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 80

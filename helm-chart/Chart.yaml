@@ -1,0 +1,6 @@
+apiVersion: v2
+name: microfrontend
+description: Unified Helm chart for micro frontend apps
+type: application
+version: 0.1.0
+appVersion: "1.0"
