@@ -6,13 +6,31 @@ import './ProductSearch.css';
 const ProductSearch = ({ filters }) => {
   const [products, setProducts] = useState([]);
 
+  // useEffect(() => {
+  //   const params = new URLSearchParams(filters).toString();
+  //   fetch(`http://localhost:4000/api/products?${params}`)
+  //     .then(res => res.json())
+  //     .then(setProducts);
+  // }, [filters]);
+
   useEffect(() => {
     const params = new URLSearchParams(filters).toString();
-    fetch(`http://localhost:4000/api/products?${params}`)
-      .then(res => res.json())
-      .then(setProducts);
-  }, [filters]);
+    const eventSource = new EventSource(`http://localhost:4000/api/products?${params}`);
 
+    eventSource.onmessage = (event) => {
+      const product = JSON.parse(event.data);
+      setProducts(prev => [...prev, product]);
+    };
+
+    eventSource.addEventListener('end', () => {
+      eventSource.close();
+    });
+
+    return () => {
+      eventSource.close();
+      setProducts([]); // Clear products when filters change or component unmounts
+    };
+  }, [filters]);
   return (
     <div className="p-4">
       <ProductTable products={products} />

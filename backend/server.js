@@ -19,7 +19,29 @@ app.get('/api/products', (req, res) => {
   if (req.query.price) {
     filtered = filtered.filter(p => p.price <= parseFloat(req.query.price));
   }
-  res.json(filtered);
+
+  // SSE support
+  if (req.headers.accept && req.headers.accept === 'text/event-stream') {
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.flushHeaders();
+
+    let i = 0;
+    function sendNext() {
+      if (i < filtered.length) {
+        res.write(`data: ${JSON.stringify(filtered[i])}\n\n`);
+        i++;
+        setTimeout(sendNext, 200); // 200ms between products
+      } else {
+        res.write('event: end\ndata: End of stream\n\n');
+        res.end();
+      }
+    }
+    sendNext();
+  } else {
+    res.json(filtered);
+  }
 });
 
 app.get('/api/products/:id', (req, res) => {
